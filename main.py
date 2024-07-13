@@ -15,12 +15,12 @@ def calculate_enthalpy():
         app.logger.debug(f"Received data: {data}")
 
         # Default values if not provided in JSON
-        default_pressure = '1.0'  # default pressure in MPa (as string)
-        default_temperature = '100.0'  # default temperature in Celsius (as string)
+        default_pressure = data.get('pressure', '1.0')  # default pressure in MPa (as string)
+        default_temperature = data.get('temperature', '100.0')  # default temperature in Celsius (as string)
 
         # Convert pressure and temperature from string to float
-        pressure = float(data.get('pressure', default_pressure))
-        temperature = float(data.get('temperature', default_temperature))
+        pressure = float(default_pressure)
+        temperature = float(default_temperature)
 
         enthalpy_in_KJKg = steamTable.h_pt(pressure, temperature)
         enthalpy_in_KcalKg = enthalpy_in_KJKg / 4.184
