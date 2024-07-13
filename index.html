@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enthalpy Calculator</title>
+</head>
+<body>
+    <h1>Enthalpy Calculator</h1>
+    <form action="/enthalpy" method="post">
+        <label for="pressure">Pressure:</label>
+        <input type="number" id="pressure" name="pressure" required><br><br>
+        
+        <label for="temperature">Temperature:</label>
+        <input type="number" id="temperature" name="temperature" required><br><br>
+        
+        <input type="submit" value="Calculate">
+    </form>
+
+    {% if result %}
+    <h2>Calculation Result</h2>
+    <p>Enthalpy in KJ/Kg: {{ result.enthalpy_KJ_Kg }}</p>
+    <p>Enthalpy in kcal/Kg: {{ result.enthalpy_kcal_Kg }}</p>
+    {% endif %}
+</body>
+</html>
