@@ -10,27 +10,17 @@ def index():
 
 @app.route('/enthalpy', methods=['GET', 'POST'])
 def calculate_enthalpy():
-    if request.method == 'GET':
-        # Assume default values or handle as needed
-        default_pressure = 68  # default pressure in MPa
-        default_temperature = 485  # default temperature in Celsius
-
-        enthalpy_in_KJKg = steamTable.h_pt(default_pressure, default_temperature)
-        enthalpy_in_KcalKg = enthalpy_in_KJKg / 4.184
-
-        result = {
-            "enthalpy_KJ_Kg": round(enthalpy_in_KJKg, 2),
-            "enthalpy_kcal_Kg": round(enthalpy_in_KcalKg, 2)
-        }
-
-        return jsonify(result), 200
-
-    elif request.method == 'POST':
+    if request.method == 'GET' or request.method == 'POST':
         try:
             data = request.get_json()
             app.logger.debug(f"Received data: {data}")
-            pressure = float(data['pressure'])
-            temperature = float(data['temperature'])
+            
+            # Default values if not provided in JSON
+            default_pressure = data.get('pressure', 1.0)  # default pressure in MPa
+            default_temperature = data.get('temperature', 100.0)  # default temperature in Celsius
+
+            pressure = float(data.get('pressure', default_pressure))
+            temperature = float(data.get('temperature', default_temperature))
 
             enthalpy_in_KJKg = steamTable.h_pt(pressure, temperature)
             enthalpy_in_KcalKg = enthalpy_in_KJKg / 4.184
