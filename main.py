@@ -10,39 +10,39 @@ def index():
 
 @app.route('/enthalpy', methods=['GET', 'POST'])
 def calculate_enthalpy():
-    if request.method == 'GET' or request.method == 'POST':
-        try:
-            data = request.get_json()
-            app.logger.debug(f"Received data: {data}")
-            
-            # Default values if not provided in JSON
-            default_pressure = data.get('pressure', 1.0)  # default pressure in MPa
-            default_temperature = data.get('temperature', 100.0)  # default temperature in Celsius
+    try:
+        data = request.get_json() if request.get_json() else {}
+        app.logger.debug(f"Received data: {data}")
 
-            pressure = float(data.get('pressure', default_pressure))
-            temperature = float(data.get('temperature', default_temperature))
+        # Default values if not provided in JSON
+        default_pressure = '1.0'  # default pressure in MPa (as string)
+        default_temperature = '100.0'  # default temperature in Celsius (as string)
 
-            enthalpy_in_KJKg = steamTable.h_pt(pressure, temperature)
-            enthalpy_in_KcalKg = enthalpy_in_KJKg / 4.184
+        # Convert pressure and temperature from string to float
+        pressure = float(data.get('pressure', default_pressure))
+        temperature = float(data.get('temperature', default_temperature))
 
-            result = {
-                "enthalpy_KJ_Kg": round(enthalpy_in_KJKg, 2),
-                "enthalpy_kcal_Kg": round(enthalpy_in_KcalKg, 2)
-            }
+        enthalpy_in_KJKg = steamTable.h_pt(pressure, temperature)
+        enthalpy_in_KcalKg = enthalpy_in_KJKg / 4.184
 
-            return jsonify(result), 200
+        result = {
+            "enthalpy_KJ_Kg": round(enthalpy_in_KJKg, 2),
+            "enthalpy_kcal_Kg": round(enthalpy_in_KcalKg, 2)
+        }
 
-        except KeyError as e:
-            app.logger.error(f"KeyError: {e}")
-            return jsonify({"error": f"Missing key in JSON data: {str(e)}"}), 400
+        return jsonify(result), 200
 
-        except ValueError as e:
-            app.logger.error(f"ValueError: {e}")
-            return jsonify({"error": f"Invalid value provided: {str(e)}"}), 400
+    except KeyError as e:
+        app.logger.error(f"KeyError: {e}")
+        return jsonify({"error": f"Missing key in JSON data: {str(e)}"}), 400
 
-        except Exception as e:
-            app.logger.error(f"Exception: {e}")
-            return jsonify({"error": str(e)}), 400
+    except ValueError as e:
+        app.logger.error(f"ValueError: {e}")
+        return jsonify({"error": f"Invalid value provided: {str(e)}"}), 400
+
+    except Exception as e:
+        app.logger.error(f"Exception: {e}")
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
